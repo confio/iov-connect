@@ -18,7 +18,8 @@
   "scripts": {
     "format": "prettier --write --loglevel warn \"./src/**/*.ts\"",
     "test": "yarn build && node jasmine-testrunner.js",
-    "build": "shx rm -rf ./build && tsc"
+    "build": "shx rm -rf ./build && tsc",
+    "cli": "iov-cli"
   },
   "devDependencies": {
     "@types/jasmine": "^3.3.13",
@@ -28,5 +29,9 @@
     "shx": "^0.3.2",
     "source-map-support": "^0.5.12",
     "typescript": "~3.4"
+  },
+  "dependencies": {
+    "@iov/cli": "^0.15.0",
+    "@iov/core": "^0.15.0"
   }
 }
