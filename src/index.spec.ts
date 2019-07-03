@@ -1,8 +1,8 @@
-import { createWallet } from "./index";
+import { life } from "./index";
 
-describe("wallet", () => {  
-    it("has answer to life", () => {
-        const answer = createWallet();
-        expect(answer).toEqual(42);
-    });
-});  
+describe("life", () => {
+  it("has an answer", () => {
+    const answer = life();
+    expect(answer).toEqual(42);
+  });
+});

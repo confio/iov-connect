@@ -1,3 +1,3 @@
-export function createWallet(): number {
+export function life(): number {
   return 42;
 }
