@@ -21,6 +21,8 @@
     "build": "shx rm -rf ./build && tsc"
   },
   "devDependencies": {
-    "prettier": "^1.18.2"
+    "prettier": "^1.18.2",
+    "shx": "^0.3.2",
+    "typescript": "~3.4"
   }
 }

@@ -1,5 +1,9 @@
 {
   "compilerOptions": {
+    "baseUrl": ".",
+    "outDir": "build",
+    "declarationDir": "build",
+    "rootDir": "src",
     "declaration": true,
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
@@ -22,5 +26,8 @@
       "./custom_types",
       "./node_modules/@types"
     ]
-  }
+  },
+  "include": [
+    "src/**/*"
+  ],
 }
