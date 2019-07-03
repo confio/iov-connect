@@ -21,8 +21,12 @@
     "build": "shx rm -rf ./build && tsc"
   },
   "devDependencies": {
+    "@types/jasmine": "^3.3.13",
+    "jasmine": "^3.4.0",
+    "jasmine-spec-reporter": "^4.2.1",
     "prettier": "^1.18.2",
     "shx": "^0.3.2",
+    "source-map-support": "^0.5.12",
     "typescript": "~3.4"
   }
 }
