@@ -27,7 +27,7 @@ describe("ensureAccount", () => {
     }
   });
 
-  it("can send tokens", async () => {
+  fit("can send tokens", async () => {
     const mine = await createWallet();
     const other = await createWallet();
     const conn = await connect(mine);
@@ -48,8 +48,9 @@ describe("ensureAccount", () => {
           tokenTicker: antnet.token,
         },
       };
-
-      await conn.signer.signAndPost(sendTx);
+      const sendTxWithFee = await conn.query.withDefaultFee(sendTx);
+      const blockInfo = await conn.signer.signAndPost(sendTxWithFee);
+      // TODO: wait until confirmation
 
       yours = await conn.query.getAccount({address: other.address});
       expect(yours).toBeDefined();
