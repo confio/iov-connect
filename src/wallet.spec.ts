@@ -1,5 +1,5 @@
 import { SendTransaction, WithCreator} from "@iov/bcp"
-import { antnet, connect, createWallet, disconnect, ensureWalletFunds, pprint } from "./wallet";
+import { antnet, connect, createWallet, disconnect, ensureWalletFunds, pprint, signAndCommit } from "./wallet";
 
 describe("createWallet", () => {
   it("returns a deterministic address", async () => {
@@ -13,7 +13,9 @@ describe("createWallet", () => {
 });
 
 describe("ensureAccount", () => {
-  it("creates a new account", async () => {
+  // This passes but antnet faucet is rate-limited.
+  // "can send tokens" tests this and more, only enable this in it's place if that one fails
+  xit("creates a new account", async () => {
     const wallet = await createWallet();
     const conn = await connect(wallet);
     try {
@@ -27,7 +29,7 @@ describe("ensureAccount", () => {
     }
   });
 
-  fit("can send tokens", async () => {
+  it("can send tokens", async () => {
     const mine = await createWallet();
     const other = await createWallet();
     const conn = await connect(mine);
@@ -48,9 +50,9 @@ describe("ensureAccount", () => {
           tokenTicker: antnet.token,
         },
       };
-      const sendTxWithFee = await conn.query.withDefaultFee(sendTx);
-      const blockInfo = await conn.signer.signAndPost(sendTxWithFee);
-      // TODO: wait until confirmation
+      const result = await signAndCommit(conn, sendTx);
+      // this should be something big on antnet
+      expect(result.height).toBeGreaterThan(1000);
 
       yours = await conn.query.getAccount({address: other.address});
       expect(yours).toBeDefined();

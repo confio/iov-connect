@@ -1,4 +1,4 @@
-import { Account, Address, BlockchainConnection, ChainId, Identity, TokenTicker } from "@iov/bcp";
+import { Account, Address, BlockchainConnection, BlockInfoFailed, ChainId, Identity, isBlockInfoPending, isBlockInfoSucceeded, TokenTicker, TransactionId, UnsignedTransaction } from "@iov/bcp";
 import { bnsCodec, bnsConnector, BnsConnection } from "@iov/bns";
 import { MultiChainSigner } from '@iov/core';
 import { Bip39, Random } from "@iov/crypto";
@@ -68,6 +68,34 @@ export async function ensureWalletFunds(conn: Connection): Promise<Account> {
     }
   }
   return acct;
+}
+
+export interface TransactionResponse {
+  readonly transactionId: TransactionId;
+  readonly height: number;
+  readonly result?: Uint8Array;
+}
+
+// Note that we get a first response when it enters mempool, and a stream of updates.
+// For the simple case, and with immediate finality (not counting 6-20 blocks),
+// we can use the simpler signAndCommit which returns result on tx success and throws
+// and exception if it fails.
+//
+// It will automatically set the default fee if tx.fee is undefined
+export async function signAndCommit(conn: Connection, tx: UnsignedTransaction): Promise<TransactionResponse> {
+  const txWithFee = tx.fee === undefined? await conn.query.withDefaultFee(tx): tx;
+  // I believe this throws if it is rejected by mempool
+  const post = await conn.signer.signAndPost(txWithFee);
+  const firstBlock = await post.blockInfo.waitFor(info => !isBlockInfoPending(info));
+  if (!isBlockInfoSucceeded(firstBlock)) {
+    const failure = firstBlock as BlockInfoFailed;
+    throw new Error(`Transaction failed: (${failure.code}) ${failure.message}`);
+  }
+  return {
+    transactionId: post.transactionId,
+    height: firstBlock.height,
+    result: firstBlock.result,
+  }
 }
 
 export function disconnect(conn: Connection): void {
