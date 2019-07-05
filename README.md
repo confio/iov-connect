@@ -50,7 +50,8 @@ const {address, mnemonic} = wallet;
 pprint({address, mnemonic})
 
 // Do not get funds... show there is no account (following should return `undefined`)
-await conn.query.getAccount({ address: conn.address });
+let acct = await conn.query.getAccount({ address: conn.address });
+pprint(acct)
 ```
 
 ### Terminal One
@@ -84,6 +85,16 @@ pprint(response)
 Go back to terminal two to ensure the funds have arrived
 
 ```ts
+// remember this was undefined before
+acct = await conn.query.getAccount({ address: conn.address });
+pprint(acct)
+
+// let's find that same transaction again....
+const txs = await conn.query.searchTx({sentFromOrTo: conn.address});
+txs.length // should be 1
+txs
 ```
 
-TODO: show tx queries
+Compare the `transactionId` and `height` with the results you got on the other terminal. They should be the same.
+You can also try `listenTx` to get a stream of updates as new transactions come in, or `liveTx` to produce a stream
+of all existing and new transactions.
